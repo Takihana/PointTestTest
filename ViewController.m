@@ -32,10 +32,10 @@
     NSMutableArray *array = [NSMutableArray array];
     
     CGPoint test[4] = {
-        CGPointMake(0.0, 0.0),
-        CGPointMake(50.0, 10.0),
-        CGPointMake(10.0, 15.0),
-        CGPointMake(10.0, 15.0)
+        CGPointMake(10, 100),
+        CGPointMake(150, 30),
+        CGPointMake(15, 150),
+        CGPointMake(100, 200)
     };
     
     // NSValueにCGPoint型の構造体をセット
@@ -73,11 +73,11 @@
      //NSLog(@"%@", points);
     for(int i = 0 ; i < 4;i++){
     
-        //CGContextMoveToPoint(context,points[i].x,points[i].y);
-        //CGContextAddLineToPoint(context,points[3-i].x, points[3-i].y);
+        CGContextMoveToPoint(context,points[i].x,points[i].y);
+        CGContextAddLineToPoint(context,points[3-i].x, points[3-i].y);
         
-        CGContextMoveToPoint(context,0,0);
-        CGContextAddLineToPoint(context,100, 100);
+        //CGContextMoveToPoint(context,100,1000);
+        //CGContextAddLineToPoint(context,300, 300);
         
         
         //CGContextAddLines(context, points, 4);
