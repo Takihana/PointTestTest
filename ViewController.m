@@ -125,7 +125,10 @@
         [self.TouchArray addObject:value];
         
         // 2014/09/21 キャンパス(後ろの画像)が消えてしまうバグと原点から線を引いてしまっている
-        //self.canvas.image = [UIImage imageNamed:@"canvas"];
+        // 2014/09/23 キャンパスの後ろの画像は右側の使った画面の名前を指定すること
+        //             原点から線を引いてしまうのはjと同じ回数だけまわすと配列が一つ足りなくなるため
+        //            →　無事解決
+        self.canvas.image = [UIImage imageNamed:@"Image"];
         
         //線を引くための頂点を格納する配列(現在は固定長だが可変長にすること)
         
@@ -138,22 +141,23 @@
             points[j++] = [value CGPointValue];
         }
         
+        // 線を引くキャンパスのサイズや不透明度、スケールを指定する
         UIGraphicsBeginImageContextWithOptions(self.canvas.frame.size, YES, 0.0);
+        //指定したキャンパスの場所を取得
         CGContextRef context = UIGraphicsGetCurrentContext();
+        // 今まで記述したものを描く（このシステムでは存在していないはず）
         [self.canvas.image drawInRect:self.canvas.bounds];
+        // 描画する線の情報を記述
         CGContextSetLineWidth(context, 10.0f);
         CGContextSetRGBStrokeColor(context, 255, 0, 0, 50);
         
-        for(int i = 0 ; i < j;i++){
-            
+        // 線で一回目と二回目でタッチした所をつなぐ
+        //for(int i = 0 ; i < j-1;i++){
+        for(int i = 0 ; i < j-1 ; i = i + 2){
+            // 始点と終点を設定
             CGContextMoveToPoint(context,points[i].x,points[i].y);
             CGContextAddLineToPoint(context,points[i+1].x, points[i+1].y);
-            
-            //CGContextMoveToPoint(context,100,1000);
-            //CGContextAddLineToPoint(context,300, 300);
-            
-            
-            //CGContextAddLines(context, points, 4);
+            // 実際に線を描画
             CGContextStrokePath(context);
             
             //NSLog(@"%f", points[i].x);
@@ -163,8 +167,12 @@
             
             
         }
+        //描画した線を実際に画面に書き写す
         self.canvas.image = UIGraphicsGetImageFromCurrentImageContext();
+        // メモリ領域を解放
         UIGraphicsEndImageContext();
+        // フラグを一回目にする
+        self.flag = false;
         
         
         
