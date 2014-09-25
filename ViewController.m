@@ -104,24 +104,42 @@
 {// シングルタッチの場合
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInView:self.canvas];
-    NSLog(@"x:%f y:%f", location.x, location.y);
     
-   // NSMutableArray *toucharray = [NSMutableArray array];
-
-    //タッチした座標をプロパティで保持できる形にする
+    NSLog(@"locacion.x:%f location.y:%f", location.x, location.y);
+    
+    //テストとして画面の中心との距離を測る
+    CGPoint org = CGPointMake(self.view.frame.size.width/2,
+                              self.view.frame.size.height/2);
+    
+    NSLog(@"org.x:%f org.y:%f", org.x, org.y);
+    
+    float x = location.x - org.x;
+    float y = -(location.y - org.y);
+    // 距離rを求める
+    float r = sqrt(x*x + y*y);
+    NSLog(@"距離：%f", r);
+    
+    if(r <= 200) {
+        location.x = org.x;
+        location.y = org.y;
+    }
+    
+    // NSMutableArray *toucharray = [NSMutableArray array];
     NSValue *value = [NSValue valueWithCGPoint:location];
     
     //一回目は線を引かない
     if(self.flag == false){
     
         [self.TouchArray addObject:value];
-        
         self.flag = true;
         
     }
     else
     {
         //線を引く処理開始
+        
+        //タッチした座標をプロパティで保持できる形にする
+        
         [self.TouchArray addObject:value];
         
         // 2014/09/21 キャンパス(後ろの画像)が消えてしまうバグと原点から線を引いてしまっている
