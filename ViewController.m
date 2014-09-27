@@ -11,9 +11,15 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *label;
 @property (weak, nonatomic) IBOutlet UIImageView *canvas;
-
 @property  NSMutableArray *TouchArray;
+@property  NSMutableArray *FromToArray;
 @property (assign, nonatomic) Boolean flag;
+
+//@property  UIView *uiView;
+@property float x;
+@property float y;
+
+
 
 @end
 
@@ -23,8 +29,25 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    //初期フラグ
     self.flag = false;
+    //線をつなぐための配列
     self.TouchArray = [NSMutableArray array];
+    //直前のタッチした点とその前のものを確保する配列
+    self.FromToArray = [NSMutableArray array];
+    
+    CGPoint org = CGPointMake(self.view.frame.size.width/2,
+                              self.view.frame.size.height/2);
+    
+    NSLog(@"org.x:%f org.y:%f", org.x, org.y);
+    
+    self.x = org.x;
+    self.y = org.y;
+    
+    //self.uiView = [[UIView alloc] initWithFrame:CGRectMake(org.x,org.y,100,100)];
+    //self.uiView.backgroundColor = [UIColor redColor];  //分かりやすいように色付け
+    //[self.view addSubview:self.uiView];
+    
 
 }
 
@@ -33,7 +56,7 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-- (IBAction)showArray {
+ /*- (IBAction)showArray {
     // 配列に数値を格納する
     NSMutableArray *array = [NSMutableArray array];
     
@@ -99,39 +122,57 @@
      self.canvas.image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
 }
+*/
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {// シングルタッチの場合
     UITouch *touch = [touches anyObject];
     CGPoint location = [touch locationInView:self.canvas];
     
-    NSLog(@"locacion.x:%f location.y:%f", location.x, location.y);
+    NSLog(@"location.x:%f location.y:%f", location.x, location.y);
     
-    //テストとして画面の中心との距離を測る
-    CGPoint org = CGPointMake(self.view.frame.size.width/2,
-                              self.view.frame.size.height/2);
+    //座標の周りに領域を作る。今回は決めうちしているが、本来は座標の配列分繰り返して判定する。
+    CGRect rc = CGRectMake(300,300,100,100);
     
-    NSLog(@"org.x:%f org.y:%f", org.x, org.y);
-    
-    float x = location.x - org.x;
-    float y = -(location.y - org.y);
-    // 距離rを求める
-    float r = sqrt(x*x + y*y);
-    NSLog(@"距離：%f", r);
-    
-    if(r <= 200) {
-        location.x = org.x;
-        location.y = org.y;
+    if(CGRectContainsPoint(rc,location)){
+    //if(CGRectContainsPoint(self.uiView.frame,location)){
+         NSLog(@"this touch!");
+        
+        location.x=300;
+        location.y=300;
+        
+        
     }
+    
+    
+    //float x = location.x - org.x;
+    //float y = -(location.y - org.y);
+    // 距離rを求める
+    //float r = sqrt(x*x + y*y);
+    //NSLog(@"距離：%f", r);
+    
+    //if(r <= 200) {
+    //    location.x = org.x;
+    //    location.y = org.y;
+    //
+    //    NSLog(@"変化後.x:%f 変化後.y:%f", location.x, location.y);
+    //
+    //}
+    
+    
     
     // NSMutableArray *toucharray = [NSMutableArray array];
     NSValue *value = [NSValue valueWithCGPoint:location];
+    NSValue *FromTovalue = [NSValue valueWithCGPoint:location];
     
     //一回目は線を引かない
     if(self.flag == false){
     
         [self.TouchArray addObject:value];
+        self.FromToArray[0]=FromTovalue;
         self.flag = true;
+        
+        
         
     }
     else
@@ -141,6 +182,11 @@
         //タッチした座標をプロパティで保持できる形にする
         
         [self.TouchArray addObject:value];
+        self.FromToArray[1]=FromTovalue;
+        
+        
+        
+        
         
         // 2014/09/21 キャンパス(後ろの画像)が消えてしまうバグと原点から線を引いてしまっている
         // 2014/09/23 キャンパスの後ろの画像は右側の使った画面の名前を指定すること
