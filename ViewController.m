@@ -39,6 +39,12 @@
     CGPoint org = CGPointMake(self.view.frame.size.width/2,
                               self.view.frame.size.height/2);
     
+    CGPoint Init = CGPointMake(0,0);
+    NSValue* InitPoint = [NSValue valueWithCGPoint:Init];
+    
+    [self.TouchArray addObject:InitPoint];
+    [self.TouchArray addObject:InitPoint];
+    
     NSLog(@"org.x:%f org.y:%f", org.x, org.y);
     
     self.x = org.x;
@@ -169,7 +175,7 @@
     if(self.flag == false){
     
         [self.TouchArray addObject:value];
-        self.FromToArray[0]=FromTovalue;
+        [self.FromToArray addObject:FromTovalue];
         self.flag = true;
         
         
@@ -182,11 +188,59 @@
         //タッチした座標をプロパティで保持できる形にする
         
         [self.TouchArray addObject:value];
-        self.FromToArray[1]=FromTovalue;
+        [self.FromToArray addObject:FromTovalue];
         
+   /*     //今回選択した始点と終点を取得（用意）
+        NSValue* Fromto = [self.FromToArray objectAtIndex:0];
+        CGPoint FromToPoint[2];
         
+         //今回選択した始点と終点を取得
+        int w = 0;
+        for(NSValue *Fromto in self.FromToArray){
+            FromToPoint[w++] = [value CGPointValue];
+        }
+
         
+        if(self.TouchArray[0] != NULL){// != NULLだとすり抜ける
+            //今までの線を引く座標の組み合わせを取得（用意）
+            NSValue* check = [self.TouchArray objectAtIndex:0];
+            CGPoint checkpoint[100];
+                       //今までの線を引く座標の組み合わせを取得
+            int checknum = 0;
+            for(NSValue *check in self.TouchArray){
+                checkpoint[checknum++] = [value CGPointValue];
+            }
+           
+            
+            for(int v = 0;v < checknum-1 ;v = v + 2){
+            
+                if(checkpoint[v].x == FromToPoint[0].x && checkpoint[v].y == FromToPoint[0].y){
+                    if(checkpoint[v+1].x == FromToPoint[1].x && checkpoint[v+1].y == FromToPoint[1].y){
+                    
+                        self.TouchArray[v+1]=self.TouchArray[v];
+                    
+                    }
+                
+                }else if (checkpoint[v].x == FromToPoint[1].x && checkpoint[v].y == FromToPoint[1].y){
+                    if(checkpoint[v+1].x == FromToPoint[0].x && checkpoint[v+1].y == FromToPoint[0].y){
+                        self.TouchArray[v+1]=self.TouchArray[v];
+                    }
+                
+                }
+            
+            }
+        }
         
+        //FromToPointが同じ座標になってしまうため線が引けなくなってしまった
+        NSValue *From = [NSValue valueWithCGPoint:FromToPoint[0]];
+        NSValue *To   = [NSValue valueWithCGPoint:FromToPoint[1]];
+        
+        [self.TouchArray addObject:From];
+        [self.TouchArray addObject:To];
+        [self.FromToArray removeObject:0];
+        [self.FromToArray removeObject:0];
+        
+        */
         
         // 2014/09/21 キャンパス(後ろの画像)が消えてしまうバグと原点から線を引いてしまっている
         // 2014/09/23 キャンパスの後ろの画像は右側の使った画面の名前を指定すること
