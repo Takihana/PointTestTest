@@ -139,10 +139,11 @@
     
     //座標の周りに領域を作る。今回は決めうちしているが、本来は座標の配列分繰り返して判定する。
     CGRect rc = CGRectMake(300,300,100,100);
+    CGRect rc2 = CGRectMake(300,500,100,100);
     
     if(CGRectContainsPoint(rc,location)){
     //if(CGRectContainsPoint(self.uiView.frame,location)){
-         NSLog(@"this touch!");
+         NSLog(@"this touch! rc!");
         
         location.x=300;
         location.y=300;
@@ -150,6 +151,15 @@
         
     }
     
+    if(CGRectContainsPoint(rc2,location)){
+        //if(CGRectContainsPoint(self.uiView.frame,location)){
+        NSLog(@"this touch! rc2!");
+        
+        location.x=300;
+        location.y=500;
+        
+        
+    }
     
     //float x = location.x - org.x;
     //float y = -(location.y - org.y);
@@ -189,6 +199,61 @@
         
         [self.TouchArray addObject:value];
         [self.FromToArray addObject:FromTovalue];
+        
+        //削除するインデックスを確保する配列
+        NSMutableIndexSet* indexes = [NSMutableIndexSet new];
+        
+        
+        //[indexes addIndex:idx];    // 削除する位置だけ記録
+        // まとめて削除
+        //[mutableArray removeObjectAtIndexes:indexes];
+        
+        
+        NSValue* valueline = [self.TouchArray objectAtIndex:0];
+        CGPoint linepoints[100];
+        
+        //重複を削除するために一度点の座標をもってくる
+        int w=0;
+        for (NSValue *valueline in self.TouchArray) {
+            linepoints[w++] = [valueline CGPointValue];
+        }
+        
+        for(int a = 0 ;a < w-1; a = a+2){
+            float FromX = linepoints[a].x;
+            float FromY = linepoints[a].y;
+            float ToX   = linepoints[a+1].x;
+            float ToY   = linepoints[a+1].y;
+            
+            for(int b = a + 2;b < w-1;b=b+2){
+                if((FromX == linepoints[b].x ) && (FromY == linepoints[b].y)){
+                    if((ToX == linepoints[b+1].x) && (ToY == linepoints[b+1].y)){
+                        [indexes addIndex:a];
+                        [indexes addIndex:a+1];
+                        [indexes addIndex:b];
+                        [indexes addIndex:b+1];
+                    }
+                    
+                }
+                if((FromX == linepoints[b+1].x ) && (FromY == linepoints[b+1].y)){
+                    if((ToX == linepoints[b].x) && (ToY == linepoints[b].y)){
+                        [indexes addIndex:a];
+                        [indexes addIndex:a+1];
+                        [indexes addIndex:b];
+                        [indexes addIndex:b+1];
+                    }
+                    
+                }
+                
+            }
+            
+            
+        }
+        
+        // まとめて削除
+        [self.TouchArray removeObjectsAtIndexes:indexes];
+
+        
+        
         
    /*     //今回選択した始点と終点を取得（用意）
         NSValue* Fromto = [self.FromToArray objectAtIndex:0];
